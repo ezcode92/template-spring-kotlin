@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: template-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-template}
+      DB_USERNAME: ${POSTGRES_USER:-template}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+      JWT_SECRET: ${JWT_SECRET:-replace-with-at-least-32-byte-secret}
+      JWT_ACCESS_TOKEN_TTL_SECONDS: ${JWT_ACCESS_TOKEN_TTL_SECONDS:-1800}
+      JWT_REFRESH_TOKEN_TTL_SECONDS: ${JWT_REFRESH_TOKEN_TTL_SECONDS:-1209600}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID:-}
+      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET:-}
+      NAVER_CLIENT_ID: ${NAVER_CLIENT_ID:-}
+      NAVER_CLIENT_SECRET: ${NAVER_CLIENT_SECRET:-}
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: template-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-template}
+      POSTGRES_USER: ${POSTGRES_USER:-template}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-template} -d ${POSTGRES_DB:-template}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

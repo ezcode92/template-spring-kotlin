@@ -1,0 +1,8 @@
+package com.template.auth.domain
+
+enum class AuthProvider {
+    GOOGLE,
+    KAKAO,
+    NAVER,
+}
+
