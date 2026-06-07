@@ -62,3 +62,4 @@ backend/src/main/kotlin/com/template
 - OAuth2 provider별 client id/secret을 환경 변수로 주입합니다.
 - `JwtTokenService`와 `JwtAuthenticationFilter`의 TODO를 실제 서명 검증/발급 로직으로 구현합니다.
 - 운영 프로필에서는 로그, DB 계정, 네트워크 접근 정책을 환경별로 분리합니다.
+
